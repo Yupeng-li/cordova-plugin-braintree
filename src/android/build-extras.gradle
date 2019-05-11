@@ -8,13 +8,21 @@ android {
 }
 
 dependencies {
-    compile 'com.braintreepayments.api:braintree:2.12.0'
-    compile 'com.braintreepayments.api:drop-in:3.3.0'
-    compile 'io.card:android-sdk:5.5.1'
+    implementation 'com.braintreepayments.api:braintree:2.22.0'
+    implementation  'com.braintreepayments.api:drop-in:3.3.0'
+    implementation  'io.card:android-sdk:5.5.1'
+    implementation 'com.google.android.gms:play-services-wallet:16.0.1'
 }
 
+
 def getPackageName() {
-    def config = file("res/xml/config.xml").getText()
+    def config
+    if (file('src/main/res/xml/config.xml').exists()) {
+        // Cordova >= 7
+        config = file('src/main/res/xml/config.xml').getText()
+    } else {
+        config = file('res/xml/config.xml').getText()
+    }
     def xml = new XmlParser(false, false).parseText(config)
     return xml.attribute("id")
 }
