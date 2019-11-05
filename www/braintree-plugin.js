@@ -77,15 +77,21 @@ BraintreePlugin.presentDropInPaymentUI = function showDropInUI(options, successC
 
     if (typeof(options.amount) === "undefined") {
         options.amount = "0.00";
-    };
+    }
+
+    if (typeof(options.currencyCode) === "undefined") {
+      options.currencyCode = "GBP";
+    }
+
     if (!isNaN(options.amount * 1)) {
-	    options.amount = (options.amount * 1).toFixed(2)
-	}
+      options.amount = (options.amount * 1).toFixed(2)
+    }
 
     var pluginOptions = [
-        options.amount,
-        options.primaryDescription
-	];
+      options.amount,
+      options.primaryDescription,
+      options.currencyCode
+    ];
 
 	exec(successCallback, failureCallback, PLUGIN_ID, "presentDropInPaymentUI", pluginOptions);
 };

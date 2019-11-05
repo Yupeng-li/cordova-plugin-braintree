@@ -91,24 +91,9 @@ public final class BraintreePlugin extends CordovaPlugin {
             callbackContext.error("The Braintree client failed to initialize.");
             return;
         }
-        //enableGooglePay(dropInRequest);
-
         callbackContext.success();
     }
 
-    private void enableGooglePay(DropInRequest dropInRequest) {
-        GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
-                .transactionInfo(TransactionInfo.newBuilder()
-                        .setTotalPrice("1.00")
-                        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                        .setCurrencyCode("USD")
-                        .build())
-                // We recommend collecting and passing billing address information
-                // with all Google Pay transactions as a best practice.
-                .billingAddressRequired(true);
-
-        dropInRequest.googlePaymentRequest(googlePaymentRequest);
-    }
 
     private synchronized void setupApplePay(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         // Apple Pay available on iOS only
@@ -132,24 +117,28 @@ public final class BraintreePlugin extends CordovaPlugin {
         // Obtain the arguments.
 
         String amount = args.getString(0);
+        String primaryDescription = args.getString(1);
+        String currencyCode = args.getString(2);
 
         if (amount == null) {
             callbackContext.error("amount is required.");
         }
 
-        GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
+        if (currencyCode == null) {
+            callbackContext.error("currencyCode is required.");
+        }
+
+         GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
             .transactionInfo(TransactionInfo.newBuilder()
             .setTotalPrice(amount)
             .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-            .setCurrencyCode("USD")
+            .setCurrencyCode(currencyCode)
             .build())
             // We recommend collecting and passing billing address information
             // with all Google Pay transactions as a best practice.
             .billingAddressRequired(true);
 
         dropInRequest.googlePaymentRequest(googlePaymentRequest);
-
-        String primaryDescription = args.getString(1);
 
         dropInRequest.amount(amount);
 
