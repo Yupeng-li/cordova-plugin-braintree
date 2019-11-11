@@ -46,12 +46,6 @@
     <!-- iOS Configuration -->
     <platform name="ios">
 
-	<!-- Hook to embed iOS frameworks after ios platform added -->
-	    <hook type="after_platform_add" src="scripts/add_embedded_ios_frameworks.js" />
-	<!-- Hook to embed iOS frameworks after installation -->
-	    <hook type="after_plugin_install" src="scripts/add_embedded_ios_frameworks.js" />
-
-
         <config-file target="config.xml" parent="/*">
             <feature name="BraintreePlugin">
                 <param name="ios-package" value="BraintreePlugin" />
@@ -73,6 +67,7 @@
         <framework src="lib/ios/PayPalDataCollector.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/PayPalOneTouch.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/BraintreeVenmo.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreePaymentFlow.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/BraintreeUnionPay.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/BraintreeUIKit.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/BraintreeDropIn.framework" custom="true" embed="true" weak="false" />
@@ -82,7 +77,6 @@
         <framework src="lib/ios/BraintreeCard.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/BraintreeApplePay.framework" custom="true" embed="true" weak="false" />
         <framework src="lib/ios/Braintree3DSecure.framework" custom="true" embed="true" weak="false" />
-
     </platform>
 
 </plugin>
