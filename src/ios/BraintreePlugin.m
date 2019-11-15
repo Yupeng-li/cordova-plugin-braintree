@@ -221,6 +221,39 @@ NSString *countryCode;
 }
 
 #pragma mark - PKPaymentAuthorizationViewControllerDelegate
+- (void)paymentAuthorizationViewController:(__unused PKPaymentAuthorizationViewController *)
+    controller didAuthorizePayment:(PKPayment *)payment
+    handler:(void (^)(PKPaymentAuthorizationResult * _Nonnull))completion
+    API_AVAILABLE(ios(11.0), watchos(4.0)) {
+        applePaySuccess = YES;
+
+        BTApplePayClient *applePayClient = [[BTApplePayClient alloc] initWithAPIClient:self.braintreeClient];
+        [applePayClient tokenizeApplePayPayment:payment completion:^(BTApplePayCardNonce *tokenizedApplePayPayment, NSError *error) {
+            if (tokenizedApplePayPayment) {
+                // On success, send nonce to your server for processing.
+                NSDictionary *dictionary = [self getPaymentUINonceResult:tokenizedApplePayPayment];
+
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                              messageAsDictionary:dictionary];
+
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:dropInUIcallbackId];
+                dropInUIcallbackId = nil;
+
+                // Then indicate success or failure via the completion callback, e.g.
+                completion([[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusSuccess errors:nil]);
+            } else {
+                // Tokenization failed. Check `error` for the cause of the failure.
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Apple Pay tokenization failed"];
+
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:dropInUIcallbackId];
+                dropInUIcallbackId = nil;
+
+                // Indicate failure via the completion callback:
+                completion([[PKPaymentAuthorizationResult alloc] initWithStatus:PKPaymentAuthorizationStatusFailure errors:nil]);
+            }
+        }];
+}
+
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus status))completion {
     applePaySuccess = YES;
     
